@@ -2,9 +2,13 @@ package arem;
 
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.jivesoftware.smackx.iqregister.AccountManager;
+import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.smackx.muc.MultiUserChatManager;
+import org.jivesoftware.smackx.muc.RoomInfo;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Localpart;
+import org.jxmpp.jid.parts.Resourcepart;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 
 import java.util.Scanner;
@@ -34,7 +38,7 @@ public final class App {
         public void run(){
             try{
                 XMPPTCPConnectionConfiguration config = XMPPTCPConnectionConfiguration.builder()
-                .setUsernameAndPassword("User4","hola")
+                .setUsernameAndPassword("Hola2","hola")
                 .setXmppDomain("alumchat.fun")
                 .setHost("alumchat.fun")
                 .setSecurityMode(ConnectionConfiguration.SecurityMode.disabled)
@@ -44,7 +48,7 @@ public final class App {
                 AbstractXMPPConnection connection = new XMPPTCPConnection(config);
                 connection.connect(); //Establishes a connection to the server
                 // AccountManager manager = AccountManager.getInstance(connection);
-                // Localpart nickname = Localpart.from("User4");
+                // Localpart nickname = Localpart.from("Hola3");
                 
                 // try {
                 //     if (manager.supportsAccountCreation()) {
@@ -63,22 +67,29 @@ public final class App {
 
                 connection.login(); //Logs in
 
+                // Scanner user = new Scanner(System.in);
+                EntityBareJid jid = JidCreate.entityBareFrom("hiyazo@conference.alumchat.fun");
                 ChatManager chatManager = ChatManager.getInstanceFor(connection);
-                Scanner user = new Scanner(System.in);
-                EntityBareJid jid = JidCreate.entityBareFrom(user.nextLine() + "@alumchat.fun");
                 Chat chat = chatManager.chatWith(jid);
                 
-                chatManager.addIncomingListener(new IncomingChatMessageListener() {
-                    @Override
-                    public void newIncomingMessage(EntityBareJid from, Message message, Chat chat) {
-                      System.out.println("New message from " + from + ": " + message.getBody());
-                    }
-                });
+                // chatManager.addIncomingListener(new IncomingChatMessageListener() {
+                //     @Override
+                //     public void newIncomingMessage(EntityBareJid from, Message message, Chat chat) {
+                //       System.out.println("New message from " + from + ": " + message.getBody());
+                //     }
+                // });
 
-                Scanner messege = new Scanner(System.in);
-                        while(connection.isConnected()){
-                            chat.send(messege.nextLine());
-                        }
+                // Scanner messege = new Scanner(System.in);
+                // while(connection.isConnected()){
+                //     chat.send(messege.nextLine());
+                // }
+                
+                MultiUserChatManager manager = MultiUserChatManager.getInstanceFor(connection);
+                MultiUserChat muc = manager.getMultiUserChat(jid);
+                Resourcepart room = Resourcepart.from("holis");
+                muc.join(room);
+                muc.sendMessage("hola");
+                
 
                 System.out.println("Connected");
             }catch(Exception e){
