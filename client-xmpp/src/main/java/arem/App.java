@@ -1,19 +1,25 @@
 package arem;
 
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
+import org.jivesoftware.smackx.filetransfer.FileTransferManager;
+import org.jivesoftware.smackx.filetransfer.OutgoingFileTransfer;
 import org.jivesoftware.smackx.iqregister.AccountManager;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.smackx.muc.RoomInfo;
+//import org.jivesoftware.smackx.si.packet.StreamInitiation.File;
 import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.EntityFullJid;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.jid.parts.Resourcepart;
+import org.jxmpp.util.XmppStringUtils;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 
 import java.util.Collection;
 import java.util.Scanner;
+import java.io.File;
 
 import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.ConnectionConfiguration;
@@ -25,6 +31,9 @@ import org.jivesoftware.smack.chat2.ChatManager;
 import org.jivesoftware.smack.chat2.IncomingChatMessageListener;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.packet.Stanza;
+import org.jivesoftware.smack.packet.Presence.Mode;
+import org.jivesoftware.smack.packet.Presence.Type;
 import org.jivesoftware.smack.roster.AbstractRosterListener;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
@@ -58,6 +67,27 @@ public final class App {
                 System.out.println("Connected");
                 
                 connection.login(); //Logs in
+
+                //#region Presence
+                Stanza presence = new Presence(Type.available, "I am busy", 42, Mode.away);
+                connection.sendStanza(presence);
+                //#endregion
+
+                //#region send files
+                // EntityFullJid jid = JidCreate.entityFullFrom("hola2@alumchat.fun/smack");
+
+                // FileTransferManager manager = FileTransferManager.getInstanceFor(connection);
+
+                // OutgoingFileTransfer transfer = manager.createOutgoingFileTransfer(jid);
+
+                // try{
+                //     transfer.sendFile(new File("hola.txt"), "You won't believe this!");
+                // }catch (SmackException.NoResponseException e) {
+                //     e.printStackTrace();
+                // }catch (SmackException.NotConnectedException e) {
+                //     e.printStackTrace();
+                // }
+                //#endregion
 
                 //#region Borrar cuenta
                 // AccountManager manager = AccountManager.getInstance(connection);
