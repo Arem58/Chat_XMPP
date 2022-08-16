@@ -26,10 +26,14 @@ import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.MessageListener;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaCollector;
+import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.chat2.Chat;
 import org.jivesoftware.smack.chat2.ChatManager;
 import org.jivesoftware.smack.chat2.IncomingChatMessageListener;
+import org.jivesoftware.smack.filter.AndFilter;
+import org.jivesoftware.smack.filter.StanzaFilter;
+import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.Stanza;
@@ -56,7 +60,7 @@ public final class App {
         public void run(){
             try{
                 XMPPTCPConnectionConfiguration config = XMPPTCPConnectionConfiguration.builder()
-                .setUsernameAndPassword("hola3","hola")
+                .setUsernameAndPassword("hola5","hola")
                 .setXmppDomain("alumchat.fun")
                 .setHost("alumchat.fun")
                 .setSecurityMode(ConnectionConfiguration.SecurityMode.disabled)
@@ -69,8 +73,43 @@ public final class App {
                 
                 connection.login(); //Logs in
 
-                // StanzaCollector collector = connection.createStanzaCollector(StanzaTypeFilter.MESSAGE);
+                //#region Informacion de un usuario
+                // Scanner conteiner = new Scanner(System.in);
+                // Roster roster = Roster.getInstanceFor(connection);
+                // if (!roster.isLoaded()) 
+                // try {
+                //     roster.reloadAndWait();
+                // } catch (SmackException.NotLoggedInException | SmackException.NotConnectedException | InterruptedException e) {
+                //     e.printStackTrace();
+                // }
+                // EntityBareJid jid = JidCreate.entityBareFrom(conteiner.nextLine() + "@" + connection.getHost());
+                // Presence presence = roster.getPresence(jid);
+                // System.out.println("Jid: " + presence.getFrom()); 
+                // System.out.println("User name: " + presence.getType().name());
+                // System.out.println("Status: " + presence.getStatus());
+                // System.out.println("Root: " + presence.getElementName());
+                // System.out.println("Mode: " + presence.getMode()); 	
+                // System.out.println("Priority: " + presence.getPriority()); 	 	
+                // System.out.println("Available: " + presence.isAvailable()); 	
+                //#endregion 	
+
+                //#region stanza
+                // StanzaCollector collector
+                //     = connection.createStanzaCollector(StanzaTypeFilter.MESSAGE);
                 // Stanza stanza = collector.nextResult();
+
+                // connection.addAsyncStanzaListener(new StanzaListener() {
+                //     public void processStanza(Stanza stanza) 
+                //       throws SmackException.NotConnectedException,InterruptedException, 
+                //         SmackException.NotLoggedInException {
+                //             // handle stanza
+                //         }
+                // }, StanzaTypeFilter.MESSAGE);
+
+                // while(connection.isConnected()){
+                //     System.out.println(stanza);
+                // }
+                //#endregion
 
                 //#region Presence
                 // Stanza presence;
@@ -158,12 +197,12 @@ public final class App {
                 //     e.printStackTrace();
                 // }
                 // Collection<RosterEntry> entries = roster.getEntries();
-                // Presence precense;
+                // Presence presence;
                 // for (RosterEntry entry : entries) {
-                //     precense = roster.getPresence(entry.getJid());
+                //     presence = roster.getPresence(entry.getJid());
                 //     System.out.println(entry.getJid());
-                //     System.out.println(precense.getType().name());
-                //     System.out.println(precense.getStatus());
+                //     System.out.println(presence.getType().name());
+                //     System.out.println(presence.getStatus());
                 // }
 
                 //#endregion
@@ -197,7 +236,7 @@ public final class App {
 
                 //#region Crear Usuario
                 // AccountManager manager = AccountManager.getInstance(connection);
-                // Localpart nickname = Localpart.from("Hola3");
+                // Localpart nickname = Localpart.from("Hola5");
                 
                 // try {
                 //     if (manager.supportsAccountCreation()) {
@@ -217,7 +256,7 @@ public final class App {
 
                 //#region Chat 1v1
                 // Scanner user = new Scanner(System.in);
-                //EntityBareJid jid = JidCreate.entityBareFrom("are@conference." + connection.getHost());
+                // EntityBareJid jid = JidCreate.entityBareFrom("are@conference." + connection.getHost());
                 // EntityBareJid jid = JidCreate.entityBareFrom(user.nextLine() + "@" + connection.getHost());
                 // ChatManager chatManager = ChatManager.getInstanceFor(connection);
                 // Chat chat = chatManager.chatWith(jid);
