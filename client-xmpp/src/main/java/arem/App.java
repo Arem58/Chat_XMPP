@@ -11,6 +11,7 @@ import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.jid.parts.Resourcepart;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 
+import java.util.Collection;
 import java.util.Scanner;
 
 import org.jivesoftware.smack.AbstractXMPPConnection;
@@ -22,6 +23,8 @@ import org.jivesoftware.smack.chat2.Chat;
 import org.jivesoftware.smack.chat2.ChatManager;
 import org.jivesoftware.smack.chat2.IncomingChatMessageListener;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.roster.Roster;
+import org.jivesoftware.smack.roster.RosterEntry;
 
 /**
  * Hello world!
@@ -39,7 +42,7 @@ public final class App {
         public void run(){
             try{
                 XMPPTCPConnectionConfiguration config = XMPPTCPConnectionConfiguration.builder()
-                .setUsernameAndPassword("Hola2","hola")
+                .setUsernameAndPassword("hola2","hola")
                 .setXmppDomain("alumchat.fun")
                 .setHost("alumchat.fun")
                 .setSecurityMode(ConnectionConfiguration.SecurityMode.disabled)
@@ -51,7 +54,45 @@ public final class App {
                 System.out.println("Connected");
                 
                 connection.login(); //Logs in
-                
+
+                //#region Borrar cuenta
+                // AccountManager manager = AccountManager.getInstance(connection);
+                // manager.deleteAccount();
+                //#endregion
+
+                Roster roster = Roster.getInstanceFor(connection);
+                Collection<RosterEntry> entries = roster.getEntries();
+                for (RosterEntry entry : entries) {
+                    System.out.println(entry);
+                }
+
+                //#region Solicitud de amistad
+                // Scanner user = new Scanner(System.in);
+                // EntityBareJid jid = JidCreate.entityBareFrom(user.nextLine() + "@" + connection.getHost());
+
+                // try {
+                //     Roster.setDefaultSubscriptionMode(Roster.SubscriptionMode.manual);
+                //     Roster roster = Roster.getInstanceFor(connection);
+    
+                //     if (!roster.contains(jid)) {
+                //         roster.createItemAndRequestSubscription(jid, user.nextLine(), null);
+                //     } else {
+                //         System.out.println("ya es un compa");
+                //     }
+    
+                // } catch (SmackException.NotLoggedInException e) {
+                //     e.printStackTrace();
+                // } catch (SmackException.NoResponseException e) {
+                //     e.printStackTrace();
+                // } catch (SmackException.NotConnectedException e) {
+                //     e.printStackTrace();
+                // } catch (XMPPException.XMPPErrorException e) {
+                //     e.printStackTrace();
+                // } catch (Exception e) {
+                //     e.printStackTrace();
+                // }
+                //#endregion
+
                 //#region Crear Usuario
                 // AccountManager manager = AccountManager.getInstance(connection);
                 // Localpart nickname = Localpart.from("Hola3");
