@@ -48,6 +48,11 @@ public final class App {
 
                 AbstractXMPPConnection connection = new XMPPTCPConnection(config);
                 connection.connect(); //Establishes a connection to the server
+                System.out.println("Connected");
+                
+                connection.login(); //Logs in
+                
+                //#region Crear Usuario
                 // AccountManager manager = AccountManager.getInstance(connection);
                 // Localpart nickname = Localpart.from("Hola3");
                 
@@ -65,11 +70,11 @@ public final class App {
                 // } catch (SmackException.NotConnectedException e) {
                 //     e.printStackTrace();
                 // }
+                //#endregion
 
-                connection.login(); //Logs in
-
+                //#region Chat 1v1
                 // Scanner user = new Scanner(System.in);
-                EntityBareJid jid = JidCreate.entityBareFrom("are@conference." + connection.getHost());
+                //EntityBareJid jid = JidCreate.entityBareFrom("are@conference." + connection.getHost());
                 // EntityBareJid jid = JidCreate.entityBareFrom(user.nextLine() + "@" + connection.getHost());
                 // ChatManager chatManager = ChatManager.getInstanceFor(connection);
                 // Chat chat = chatManager.chatWith(jid);
@@ -85,37 +90,38 @@ public final class App {
                 // while(connection.isConnected()){
                 //     chat.send(messege.nextLine());
                 // }
+                //#endregion
                 
+                //#region Chat Grupal
+                // MultiUserChatManager manager = MultiUserChatManager.getInstanceFor(connection);
+                // MultiUserChat muc = manager.getMultiUserChat(jid);
+                // Resourcepart room = Resourcepart.from("arem");
+                // if (!muc.isJoined())
+                //     muc.join(room);
 
-                //Chat grupal
-                MultiUserChatManager manager = MultiUserChatManager.getInstanceFor(connection);
-                MultiUserChat muc = manager.getMultiUserChat(jid);
-                Resourcepart room = Resourcepart.from("arem");
-                if (!muc.isJoined())
-                    muc.join(room);
-
-                muc.addMessageListener(new MessageListener() {
-                    @Override
-                    public void processMessage(Message message){
-                        System.out.println("Message listener Received message in send message: "
-                        + (message != null ? message.getBody() : "NULL") + "  , Message sender :" + message.getFrom());;
-                    }
-                });
-
-                Scanner conteiner = new Scanner(System.in);
-                String messege = "";
-                System.out.println("Para ver la opciones en el menu precione 1: ");
-                while(!messege.contains("~")){
-                    messege = conteiner.nextLine();
-                    if (messege.contains("1"))
-                        System.out.println("Presione ~ para salir");
-                    else
-                        muc.sendMessage(messege);
-                }
-
-                muc.leave();
-
-                System.out.println("Connected");
+                // muc.addMessageListener(new MessageListener() {
+                //     @Override
+                //     public void processMessage(Message message){
+                //         System.out.println("Message listener Received message in send message: "
+                //         + (message != null ? message.getBody() : "NULL") + "  , Message sender :" + message.getFrom());;
+                //     }
+                // });
+                
+                // Scanner conteiner = new Scanner(System.in);
+                // String messege = "";
+                // System.out.println("Para ver la opciones en el menu precione 1: ");
+                // while(!messege.contains("~")){
+                    //     messege = conteiner.nextLine();
+                    //     if (messege.contains("1"))
+                    //         System.out.println("Presione ~ para salir");
+                    //     else
+                    //         muc.sendMessage(messege);
+                    // }
+                    
+                    // muc.leave();
+                    //#endregion
+                    
+                System.out.println("Disconnected");
             }catch(Exception e){
                 e.printStackTrace();
             }
