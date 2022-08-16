@@ -86,9 +86,11 @@ public final class App {
                 //     chat.send(messege.nextLine());
                 // }
                 
+
+                //Chat grupal
                 MultiUserChatManager manager = MultiUserChatManager.getInstanceFor(connection);
                 MultiUserChat muc = manager.getMultiUserChat(jid);
-                Resourcepart room = Resourcepart.from("qwer");
+                Resourcepart room = Resourcepart.from("arem");
                 if (!muc.isJoined())
                     muc.join(room);
 
@@ -100,13 +102,15 @@ public final class App {
                     }
                 });
 
-                Scanner messege = new Scanner(System.in);
-                String hola = "";
-                while(!hola.contains("1")){
-                    // if (messege.nextLine().contains("1"))
-                    //     muc.leave();
-                    hola = messege.nextLine();
-                    muc.sendMessage(hola);
+                Scanner conteiner = new Scanner(System.in);
+                String messege = "";
+                System.out.println("Para ver la opciones en el menu precione 1: ");
+                while(!messege.contains("~")){
+                    messege = conteiner.nextLine();
+                    if (messege.contains("1"))
+                        System.out.println("Presione ~ para salir");
+                    else
+                        muc.sendMessage(messege);
                 }
 
                 muc.leave();
