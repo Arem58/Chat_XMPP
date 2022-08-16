@@ -15,6 +15,7 @@ import java.util.Scanner;
 
 import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.ConnectionConfiguration;
+import org.jivesoftware.smack.MessageListener;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.chat2.Chat;
@@ -68,9 +69,10 @@ public final class App {
                 connection.login(); //Logs in
 
                 // Scanner user = new Scanner(System.in);
-                EntityBareJid jid = JidCreate.entityBareFrom("hiyazo@conference.alumchat.fun");
-                ChatManager chatManager = ChatManager.getInstanceFor(connection);
-                Chat chat = chatManager.chatWith(jid);
+                EntityBareJid jid = JidCreate.entityBareFrom("are@conference." + connection.getHost());
+                // EntityBareJid jid = JidCreate.entityBareFrom(user.nextLine() + "@" + connection.getHost());
+                // ChatManager chatManager = ChatManager.getInstanceFor(connection);
+                // Chat chat = chatManager.chatWith(jid);
                 
                 // chatManager.addIncomingListener(new IncomingChatMessageListener() {
                 //     @Override
@@ -86,10 +88,28 @@ public final class App {
                 
                 MultiUserChatManager manager = MultiUserChatManager.getInstanceFor(connection);
                 MultiUserChat muc = manager.getMultiUserChat(jid);
-                Resourcepart room = Resourcepart.from("holis");
-                muc.join(room);
-                muc.sendMessage("hola");
-                
+                Resourcepart room = Resourcepart.from("qwer");
+                if (!muc.isJoined())
+                    muc.join(room);
+
+                muc.addMessageListener(new MessageListener() {
+                    @Override
+                    public void processMessage(Message message){
+                        System.out.println("Message listener Received message in send message: "
+                        + (message != null ? message.getBody() : "NULL") + "  , Message sender :" + message.getFrom());;
+                    }
+                });
+
+                Scanner messege = new Scanner(System.in);
+                String hola = "";
+                while(!hola.contains("1")){
+                    // if (messege.nextLine().contains("1"))
+                    //     muc.leave();
+                    hola = messege.nextLine();
+                    muc.sendMessage(hola);
+                }
+
+                muc.leave();
 
                 System.out.println("Connected");
             }catch(Exception e){
