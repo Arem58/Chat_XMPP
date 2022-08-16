@@ -6,6 +6,7 @@ import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.smackx.muc.RoomInfo;
 import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.jid.parts.Resourcepart;
@@ -23,8 +24,11 @@ import org.jivesoftware.smack.chat2.Chat;
 import org.jivesoftware.smack.chat2.ChatManager;
 import org.jivesoftware.smack.chat2.IncomingChatMessageListener;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.roster.AbstractRosterListener;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
+import org.jivesoftware.smack.roster.RosterListener;
 
 /**
  * Hello world!
@@ -60,11 +64,33 @@ public final class App {
                 // manager.deleteAccount();
                 //#endregion
 
+                //#region Mostrar todo los usuarios
                 Roster roster = Roster.getInstanceFor(connection);
-                Collection<RosterEntry> entries = roster.getEntries();
-                for (RosterEntry entry : entries) {
-                    System.out.println(entry);
+
+                roster.addRosterListener(new RosterListener() {
+                    public void entriesAdded(Collection<Jid> addresses) { }
+                    public void entriesDeleted(Collection<Jid> addresses) {  }
+                    public void entriesUpdated(Collection<Jid> addresses) {  }
+                    public void presenceChanged(Presence presence) { 
+                        System.out.println("Presence changed: " + presence.getFrom() + " " + presence);
+                    }
+                });
+
+                if (!roster.isLoaded()) 
+                try {
+                    roster.reloadAndWait();
+                } catch (SmackException.NotLoggedInException | SmackException.NotConnectedException | InterruptedException e) {
+                    e.printStackTrace();
                 }
+                Collection<RosterEntry> entries = roster.getEntries();
+                Presence precense;
+                for (RosterEntry entry : entries) {
+                    precense = roster.getPresence(entry.getJid());
+                    System.out.println(entry.getJid());
+                    System.out.println(precense.getType().name());
+                    System.out.println(precense.getStatus());
+                }
+                //#endregion
 
                 //#region Solicitud de amistad
                 // Scanner user = new Scanner(System.in);
