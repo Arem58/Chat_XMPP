@@ -46,7 +46,7 @@ public final class App {
         public void run(){
             try{
                 XMPPTCPConnectionConfiguration config = XMPPTCPConnectionConfiguration.builder()
-                .setUsernameAndPassword("hola2","hola")
+                .setUsernameAndPassword("hola3","hola")
                 .setXmppDomain("alumchat.fun")
                 .setHost("alumchat.fun")
                 .setSecurityMode(ConnectionConfiguration.SecurityMode.disabled)
@@ -65,31 +65,32 @@ public final class App {
                 //#endregion
 
                 //#region Mostrar todo los usuarios
-                Roster roster = Roster.getInstanceFor(connection);
+                // Roster roster = Roster.getInstanceFor(connection);
 
-                roster.addRosterListener(new RosterListener() {
-                    public void entriesAdded(Collection<Jid> addresses) { }
-                    public void entriesDeleted(Collection<Jid> addresses) {  }
-                    public void entriesUpdated(Collection<Jid> addresses) {  }
-                    public void presenceChanged(Presence presence) { 
-                        System.out.println("Presence changed: " + presence.getFrom() + " " + presence);
-                    }
-                });
+                // roster.addRosterListener(new RosterListener() {
+                //     public void entriesAdded(Collection<Jid> addresses) { }
+                //     public void entriesDeleted(Collection<Jid> addresses) {  }
+                //     public void entriesUpdated(Collection<Jid> addresses) {  }
+                //     public void presenceChanged(Presence presence) { 
+                //         System.out.println("Presence changed: " + presence.getFrom() + " " + presence);
+                //     }
+                // });
 
-                if (!roster.isLoaded()) 
-                try {
-                    roster.reloadAndWait();
-                } catch (SmackException.NotLoggedInException | SmackException.NotConnectedException | InterruptedException e) {
-                    e.printStackTrace();
-                }
-                Collection<RosterEntry> entries = roster.getEntries();
-                Presence precense;
-                for (RosterEntry entry : entries) {
-                    precense = roster.getPresence(entry.getJid());
-                    System.out.println(entry.getJid());
-                    System.out.println(precense.getType().name());
-                    System.out.println(precense.getStatus());
-                }
+                // if (!roster.isLoaded()) 
+                // try {
+                //     roster.reloadAndWait();
+                // } catch (SmackException.NotLoggedInException | SmackException.NotConnectedException | InterruptedException e) {
+                //     e.printStackTrace();
+                // }
+                // Collection<RosterEntry> entries = roster.getEntries();
+                // Presence precense;
+                // for (RosterEntry entry : entries) {
+                //     precense = roster.getPresence(entry.getJid());
+                //     System.out.println(entry.getJid());
+                //     System.out.println(precense.getType().name());
+                //     System.out.println(precense.getStatus());
+                // }
+
                 //#endregion
 
                 //#region Solicitud de amistad
