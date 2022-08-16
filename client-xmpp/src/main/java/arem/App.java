@@ -25,6 +25,7 @@ import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.MessageListener;
 import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.StanzaCollector;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.chat2.Chat;
 import org.jivesoftware.smack.chat2.ChatManager;
@@ -68,9 +69,53 @@ public final class App {
                 
                 connection.login(); //Logs in
 
+                // StanzaCollector collector = connection.createStanzaCollector(StanzaTypeFilter.MESSAGE);
+                // Stanza stanza = collector.nextResult();
+
                 //#region Presence
-                Stanza presence = new Presence(Type.available, "I am busy", 42, Mode.away);
-                connection.sendStanza(presence);
+                // Stanza presence;
+                // Scanner conteiner = new Scanner(System.in);
+                // int opciones;
+                // System.out.println("""
+                //         Cambien su estado:
+                //         1. Available.
+                //         2. Away.
+                //         3. Free to chat.
+                //         4. Do not disturb.
+                //         5. Away for an extended period of time.
+                //         """
+                //             );
+                            
+                // while(true){
+                //     opciones = conteiner.nextInt(); 
+                //     switch(opciones){
+                //         case 1:
+                //             presence = new Presence(Presence.Type.available, "I am busy", 42, Mode.available);
+                //             connection.sendStanza(presence);       
+                //             break;
+                //         case 2:
+                //             presence = new Presence(Presence.Type.available, "I am busy", 42, Mode.away);
+                //             connection.sendStanza(presence);  
+                //             break;
+                //         case 3:
+                //             presence = new Presence(Presence.Type.available, "I am busy", 42, Mode.chat);
+                //             connection.sendStanza(presence);   
+                //             break;
+                //         case 4:
+                //             presence = new Presence(Presence.Type.available, "I am busy", 42, Mode.dnd);
+                //             connection.sendStanza(presence);  
+                //             break;
+                //         case 5:
+                //             presence = new Presence(Presence.Type.available, "I am busy", 42, Mode.xa);
+                //             connection.sendStanza(presence);  
+                //             break;
+                //         default:
+                //             System.out.println("Elija una de las opciones disponibles");
+                //             break;
+                //     }
+                //     if (opciones < 5)
+                //         break;
+                // }
                 //#endregion
 
                 //#region send files
