@@ -159,6 +159,10 @@ public final class App {
                         //#region Listeners y declaracion de variables
                         //Account Manager
                         AccountManager manager = AccountManager.getInstance(connection);
+                        //Jids
+                        EntityBareJid jid;
+                        //Presence
+                        Presence presence;
                         //#region Roster
                         Roster.setDefaultSubscriptionMode(Roster.SubscriptionMode.manual);
                         Roster roster = Roster.getInstanceFor(connection);
@@ -190,7 +194,6 @@ public final class App {
                                 case 1:
                                     //#region Mostrar todo los usuarios
                                     Collection<RosterEntry> entries = roster.getEntries();
-                                    Presence presence;
                                     System.out.println("------Lista de usuarios -----");
                                     for (RosterEntry entry : entries) {
                                         presence = roster.getPresence(entry.getJid());
@@ -206,9 +209,8 @@ public final class App {
                                     //#region Solicitud de amistad
                                     System.out.println("-----Solicitud de amistas-----");;
                                     System.out.println("Ingrese el nombre del contacto que desea agregar");;
-                                    System.out.print(">");;
-                                    EntityBareJid jid = JidCreate.entityBareFrom(conteiner.nextLine() + "@" + connection.getHost());
-
+                                    System.out.print(">");
+                                    jid = JidCreate.entityBareFrom(conteiner.nextLine() + "@" + connection.getHost());
                                     try {
                                         if (!roster.contains(jid)) {
                                             roster.createItemAndRequestSubscription(jid, conteiner.nextLine(), null);
@@ -229,10 +231,30 @@ public final class App {
                                         e.printStackTrace();
                                     }
                                     //#endregion
-                                System.out.println("Elija una de las opciones disponibles"); 
                                     break;
                                 case 3:
-                                System.out.println("Elija una de las opciones disponibles");  
+                                    //#region Informacion de un usuario
+                                    System.out.println("-----Informacion de un usuario-----");;
+                                    System.out.println("Ingrese el nombre del usuario para ver su informacion");;
+                                    System.out.print(">");
+                                    if (!roster.isLoaded()) 
+                                    try {
+                                        roster.reloadAndWait();
+                                    } catch (SmackException.NotLoggedInException | SmackException.NotConnectedException | InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                    jid = JidCreate.entityBareFrom(conteiner.nextLine() + "@" + connection.getHost());
+                                    presence = roster.getPresence(jid);
+                                    System.out.println("----------Informacion----------");;
+                                    System.out.println("Jid: " + presence.getFrom()); 
+                                    System.out.println("User name: " + presence.getType().name());
+                                    System.out.println("Status: " + presence.getStatus());
+                                    System.out.println("Root: " + presence.getElementName());
+                                    System.out.println("Mode: " + presence.getMode()); 	
+                                    System.out.println("Priority: " + presence.getPriority()); 	 	
+                                    System.out.println("Available: " + presence.isAvailable()); 	
+                                    System.out.println("-------------------------------");;
+                                    //#endregion 	
                                     break;
                                 case 4:
                                 System.out.println("Elija una de las opciones disponibles");  
