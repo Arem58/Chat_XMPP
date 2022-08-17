@@ -55,12 +55,41 @@ public final class App {
      * Says hello to the world.
      * @param args The arguments of the program.
      */
+
+    public static void menuInicio(){
+        System.out.println("""
+                --------Menu----------
+                    1. Crear usuario
+                    2. Iniciar sesion
+                    3. Opciones
+                    4. Salir
+                ----------------------
+                """); 
+    }
+
+    public static void menuPrincipal(){
+        System.out.println("""
+                --------Menu Principal----------
+                    1. Lista de todos los usuarios
+                    2. Agregar contacto
+                    3. Ver los datos de un usuario
+                    4. Chat con usuario
+                    5. Unirse a un room
+                    6. Cambiar estatus
+                    7. Cerrar sesion
+                    8. Eliminar cuenta
+                    9. Opciones
+                --------------------------------
+                """); 
+    }
+
     public static void main(String[] args) {
+
         new Thread(){    
         public void run(){
             try{
                 XMPPTCPConnectionConfiguration config = XMPPTCPConnectionConfiguration.builder()
-                .setUsernameAndPassword("hola5","hola")
+                //.setUsernameAndPassword("hola5","hola")
                 .setXmppDomain("alumchat.fun")
                 .setHost("alumchat.fun")
                 .setSecurityMode(ConnectionConfiguration.SecurityMode.disabled)
@@ -71,10 +100,151 @@ public final class App {
                 connection.connect(); //Establishes a connection to the server
                 System.out.println("Connected");
                 
-                connection.login(); //Logs in
+                Scanner conteiner = new Scanner(System.in);
+                int op;
+                menuInicio();
+                while(true){
+                    System.out.print("> ");
+                    op = Integer.parseInt(conteiner.nextLine());
+                    System.out.print(" ");
+                    if (op == 1){
+                        //#region Pedido de datos crear usuario
+                        String user;
+                        String pass; 
+                        System.out.println("Crear usuario");
+                        System.out.println("Ingrese nombre de usuario: ");
+                        System.out.print("> ");
+                        user = conteiner.nextLine();
+                        System.out.println("Ingrese contrasena: ");
+                        System.out.print("> "); 
+                        pass = conteiner.nextLine();
+                        //#endregion
+                        //#region Sign Up
+                        AccountManager manager = AccountManager.getInstance(connection);
+                        Localpart nickname = Localpart.from(user);
+                        
+                        try {
+                            if (manager.supportsAccountCreation()) {
+                                manager.sensitiveOperationOverInsecureConnection(true);
+                                manager.createAccount(nickname, pass);
+
+                            }
+                        } catch (SmackException.NoResponseException e) {
+                            e.printStackTrace();
+                        } catch (XMPPException.XMPPErrorException e) {
+                            e.printStackTrace();
+                            System.out.println("Ya existe cuenta");
+                        } catch (SmackException.NotConnectedException e) {
+                            e.printStackTrace();
+                        }
+                        //#endregion
+                        System.out.println("Usuario Creado1"); 
+                        menuInicio();
+                    }else if (op == 2){
+                        //#region Pedido de datos inicio de sesion
+                        String user;
+                        String pass; 
+                        System.out.println("Iniciar sesion");
+                        System.out.println("Ingrese nombre de usuario: ");
+                        System.out.print("> ");
+                        user = conteiner.nextLine();
+                        System.out.println("Ingrese contrasena: ");
+                        System.out.print("> "); 
+                        pass = conteiner.nextLine();
+                        //#endregion
+                        
+                        System.out.println("Inicio de sesion exitoso");
+                        connection.login(user, pass); //Logs in
+
+                        //#region Listeners y declaracion de variables
+                        //#region Roster
+                        Roster roster = Roster.getInstanceFor(connection);
+
+                        roster.addRosterListener(new RosterListener() {
+                            public void entriesAdded(Collection<Jid> addresses) { }
+                            public void entriesDeleted(Collection<Jid> addresses) {  }
+                            public void entriesUpdated(Collection<Jid> addresses) {  }
+                            public void presenceChanged(Presence presence) { 
+                                System.out.println("Presence changed: " + presence.getFrom() + " " + presence);
+                            }
+                        });
+                        //#endregion
+                        //#endregion
+
+                        //#region Funciones principales
+                        menuPrincipal();
+                        while(connection.isConnected()){
+                            System.out.print("> ");
+                            op = Integer.parseInt(conteiner.nextLine());
+                            System.out.print(" ");
+                            switch(op){
+                                case 1:
+                                //#region Mostrar todo los usuarios
+                                if (!roster.isLoaded()) 
+                                    try {
+                                        roster.reloadAndWait();
+                                    } catch (SmackException.NotLoggedInException | SmackException.NotConnectedException | InterruptedException e) {
+                                        e.printStackTrace();
+                                }
+                                Collection<RosterEntry> entries = roster.getEntries();
+                                Presence presence;
+                                System.out.println("------Lista de usuarios -----");
+                                for (RosterEntry entry : entries) {
+                                    presence = roster.getPresence(entry.getJid());
+                                    System.out.println("JId: " + entry.getJid());
+                                    System.out.println("User: " + presence.getType().name());
+                                    System.out.println("Status: " + presence.getStatus());
+                                    System.out.println("Available: " + presence.isAvailable());
+                                }
+                                System.out.println("-----------------------------");
+                                //#endregion     
+                                    break;
+                                case 2:
+                                System.out.println("Elija una de las opciones disponibles"); 
+                                    break;
+                                case 3:
+                                System.out.println("Elija una de las opciones disponibles");  
+                                    break;
+                                case 4:
+                                System.out.println("Elija una de las opciones disponibles");  
+                                    break;
+                                case 5:
+                                System.out.println("Elija una de las opciones disponibles"); 
+                                    break;
+                                case 6:
+                                System.out.println("Elija una de las opciones disponibles"); 
+                                    break;
+                                case 7:
+                                    System.out.println("Sesion cerrada"); 
+                                    connection.disconnect();
+                                    break;
+                                case 8:
+                                System.out.println("Elija una de las opciones disponibles"); 
+                                    break;
+                                case 9:
+                                    menuPrincipal();
+                                    break;
+                                default:
+                                    System.out.println("Elija una de las opciones disponibles");
+                                    break;
+                            }
+                        }
+                        //#endregion
+                        connection.connect();// se tiene que volver a conectar al servidor
+                        menuInicio();
+                    }else if (op == 3){
+                        menuInicio();
+                    }else if (op == 4){
+                        break;
+                    }else {
+                        System.out.println(" ");
+                        System.out.println("Ingrese una opcion correcta");
+                        System.out.println(" ");
+                    }
+                }
+                
 
                 //#region Informacion de un usuario
-                // Scanner conteiner = new Scanner(System.in);
                 // Roster roster = Roster.getInstanceFor(connection);
                 // if (!roster.isLoaded()) 
                 // try {
