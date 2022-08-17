@@ -157,7 +157,10 @@ public final class App {
                         connection.login(user, pass); //Logs in
 
                         //#region Listeners y declaracion de variables
+                        //Account Manager
+                        AccountManager manager = AccountManager.getInstance(connection);
                         //#region Roster
+                        Roster.setDefaultSubscriptionMode(Roster.SubscriptionMode.manual);
                         Roster roster = Roster.getInstanceFor(connection);
 
                         roster.addRosterListener(new RosterListener() {
@@ -168,6 +171,12 @@ public final class App {
                                 System.out.println("Presence changed: " + presence.getFrom() + " " + presence);
                             }
                         });
+                        if (!roster.isLoaded()) 
+                            try {
+                                roster.reloadAndWait();
+                            } catch (SmackException.NotLoggedInException | SmackException.NotConnectedException | InterruptedException e) {
+                                e.printStackTrace();
+                        }
                         //#endregion
                         //#endregion
 
@@ -179,27 +188,47 @@ public final class App {
                             System.out.print(" ");
                             switch(op){
                                 case 1:
-                                //#region Mostrar todo los usuarios
-                                if (!roster.isLoaded()) 
-                                    try {
-                                        roster.reloadAndWait();
-                                    } catch (SmackException.NotLoggedInException | SmackException.NotConnectedException | InterruptedException e) {
-                                        e.printStackTrace();
-                                }
-                                Collection<RosterEntry> entries = roster.getEntries();
-                                Presence presence;
-                                System.out.println("------Lista de usuarios -----");
-                                for (RosterEntry entry : entries) {
-                                    presence = roster.getPresence(entry.getJid());
-                                    System.out.println("JId: " + entry.getJid());
-                                    System.out.println("User: " + presence.getType().name());
-                                    System.out.println("Status: " + presence.getStatus());
-                                    System.out.println("Available: " + presence.isAvailable());
-                                }
-                                System.out.println("-----------------------------");
-                                //#endregion     
+                                    //#region Mostrar todo los usuarios
+                                    Collection<RosterEntry> entries = roster.getEntries();
+                                    Presence presence;
+                                    System.out.println("------Lista de usuarios -----");
+                                    for (RosterEntry entry : entries) {
+                                        presence = roster.getPresence(entry.getJid());
+                                        System.out.println("JId: " + entry.getJid());
+                                        System.out.println("User: " + presence.getType().name());
+                                        System.out.println("Status: " + presence.getStatus());
+                                        System.out.println("Available: " + presence.isAvailable());
+                                    }
+                                    System.out.println("-----------------------------");
+                                    //#endregion     
                                     break;
                                 case 2:
+                                    //#region Solicitud de amistad
+                                    System.out.println("-----Solicitud de amistas-----");;
+                                    System.out.println("Ingrese el nombre del contacto que desea agregar");;
+                                    System.out.print(">");;
+                                    EntityBareJid jid = JidCreate.entityBareFrom(conteiner.nextLine() + "@" + connection.getHost());
+
+                                    try {
+                                        if (!roster.contains(jid)) {
+                                            roster.createItemAndRequestSubscription(jid, conteiner.nextLine(), null);
+                                            System.out.println("Se ha enviado exitosamente la solicitud");
+                                        } else {
+                                            System.out.println("ya es un compa");
+                                        }
+
+                                    } catch (SmackException.NotLoggedInException e) {
+                                        e.printStackTrace();
+                                    } catch (SmackException.NoResponseException e) {
+                                        e.printStackTrace();
+                                    } catch (SmackException.NotConnectedException e) {
+                                        e.printStackTrace();
+                                    } catch (XMPPException.XMPPErrorException e) {
+                                        e.printStackTrace();
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                    //#endregion
                                 System.out.println("Elija una de las opciones disponibles"); 
                                     break;
                                 case 3:
@@ -215,11 +244,17 @@ public final class App {
                                 System.out.println("Elija una de las opciones disponibles"); 
                                     break;
                                 case 7:
+                                    //#region Cerrar sesion
                                     System.out.println("Sesion cerrada"); 
                                     connection.disconnect();
+                                    //#endregion
                                     break;
                                 case 8:
-                                System.out.println("Elija una de las opciones disponibles"); 
+                                    //#region Borrar cuenta
+                                    System.out.println("Se ha borrado la cuenta"); 
+                                    manager.deleteAccount();
+                                    connection.disconnect();
+                                    //#endregion
                                     break;
                                 case 9:
                                     menuPrincipal();
