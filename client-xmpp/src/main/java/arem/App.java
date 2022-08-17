@@ -163,6 +163,15 @@ public final class App {
                         EntityBareJid jid;
                         //Presence
                         Presence presence;
+                        //#region Chats
+                        ChatManager chatManager = ChatManager.getInstanceFor(connection);
+                        chatManager.addIncomingListener(new IncomingChatMessageListener() {
+                            @Override
+                            public void newIncomingMessage(EntityBareJid from, Message message, Chat chat) {
+                              System.out.println("New message from " + from + ": " + message.getBody());
+                            }
+                        });
+                        //#endregion
                         //#region Roster
                         Roster.setDefaultSubscriptionMode(Roster.SubscriptionMode.manual);
                         Roster roster = Roster.getInstanceFor(connection);
@@ -186,6 +195,7 @@ public final class App {
 
                         //#region Funciones principales
                         menuPrincipal();
+                        String messege = "";
                         while(connection.isConnected()){
                             System.out.print("> ");
                             op = Integer.parseInt(conteiner.nextLine());
@@ -257,10 +267,59 @@ public final class App {
                                     //#endregion 	
                                     break;
                                 case 4:
-                                System.out.println("Elija una de las opciones disponibles");  
+                                    //#region Chat 1v1
+                                    System.out.println("Ingrese con quien quiere chatear");
+                                    System.out.print(">");
+                                    jid = JidCreate.entityBareFrom(conteiner.nextLine() + "@" + connection.getHost());
+                                    Chat chat = chatManager.chatWith(jid);
+                                    
+                                    System.out.println("-----Chat con " + jid + "-----");;
+                                    System.out.println("Para ver la opciones en el menu precione 1: ");
+                                    while(!messege.contains("~")){
+                                        System.out.print("> (opciones 1)");
+                                        messege = conteiner.nextLine();
+                                        if (messege.contains("1"))
+                                                System.out.println("Presione ~ para salir");
+                                        else if (!messege.contains("~"))
+                                            chat.send(messege);
+                                    }
+                                    System.out.println("-----Has salido del chat-----");
+                                    //#endregion 
                                     break;
                                 case 5:
-                                System.out.println("Elija una de las opciones disponibles"); 
+                                    //#region Chat Grupal
+                                    System.out.println("Ingrese el room al que quiere ingresar");
+                                    System.out.print(">");
+                                    jid = JidCreate.entityBareFrom(conteiner.nextLine() + "@conference." + connection.getHost());
+                                    MultiUserChatManager managerCum = MultiUserChatManager.getInstanceFor(connection);
+                                    MultiUserChat muc = managerCum.getMultiUserChat(jid);
+                                    System.out.println("Ingrese su apodo");
+                                    System.out.print(">");
+                                    Resourcepart room = Resourcepart.from(conteiner.nextLine());
+                                    if (!muc.isJoined())
+                                        muc.join(room);
+                                    
+                                    muc.addMessageListener(new MessageListener() {
+                                        @Override
+                                        public void processMessage(Message message){
+                                            System.out.println("Message listener Received message in send message: "
+                                            + (message != null ? message.getBody() : "NULL") + "  , Message sender :" + message.getFrom());;
+                                        }
+                                    });
+                                    
+                                    System.out.println("-----Chat con " + jid + "-----");;
+                                    System.out.println("Para ver la opciones en el menu precione 1: ");
+                                    while(!messege.contains("~")){
+                                            System.out.print("> (opciones 1)");
+                                            messege = conteiner.nextLine();
+                                            if (messege.contains("1"))
+                                                System.out.println("Presione ~ para salir");
+                                            else if (!messege.contains("~"))
+                                                muc.sendMessage(messege);
+                                        }    
+                                    muc.leave();
+                                    System.out.println("-----Has salido del room-----");
+                                    //#endregion 
                                     break;
                                 case 6:
                                 System.out.println("Elija una de las opciones disponibles"); 
