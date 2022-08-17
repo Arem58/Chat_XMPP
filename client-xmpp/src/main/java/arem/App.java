@@ -88,6 +88,7 @@ public final class App {
         new Thread(){    
         public void run(){
             try{
+                //Configuracion para la conexion con el servidor
                 XMPPTCPConnectionConfiguration config = XMPPTCPConnectionConfiguration.builder()
                 //.setUsernameAndPassword("hola5","hola")
                 .setXmppDomain("alumchat.fun")
@@ -103,6 +104,7 @@ public final class App {
                 Scanner conteiner = new Scanner(System.in);
                 int op;
                 menuInicio();
+                //Menu inicial
                 while(true){
                     System.out.print("> ");
                     op = Integer.parseInt(conteiner.nextLine());
@@ -122,7 +124,8 @@ public final class App {
                         //#region Sign Up
                         AccountManager manager = AccountManager.getInstance(connection);
                         Localpart nickname = Localpart.from(user);
-                        
+
+                        //Se crea la cuenta verificando si ya existe
                         try {
                             if (manager.supportsAccountCreation()) {
                                 manager.sensitiveOperationOverInsecureConnection(true);
@@ -153,6 +156,7 @@ public final class App {
                         pass = conteiner.nextLine();
                         //#endregion
                         
+                        //Login
                         connection.login(user, pass); //Logs in
                         System.out.println("Inicio de sesion exitoso");
 
@@ -343,23 +347,23 @@ public final class App {
                                         messege = conteiner.nextLine();
                                         switch(op){
                                             case 1:
-                                                presenceSTZ = new Presence(Presence.Type.available, messege, 42, Mode.available);
+                                                presenceSTZ = new Presence(Type.available, messege, 42, Mode.available);
                                                 connection.sendStanza(presenceSTZ);       
                                                 break;
                                             case 2:
-                                                presenceSTZ = new Presence(Presence.Type.available, messege, 42, Mode.away);
+                                                presenceSTZ = new Presence(Type.available, messege, 42, Mode.away);
                                                 connection.sendStanza(presenceSTZ);  
                                                 break;
                                             case 3:
-                                                presenceSTZ = new Presence(Presence.Type.available, messege, 42, Mode.chat);
+                                                presenceSTZ = new Presence(Type.available, messege, 42, Mode.chat);
                                                 connection.sendStanza(presenceSTZ);   
                                                 break;
                                             case 4:
-                                                presenceSTZ = new Presence(Presence.Type.available, messege, 42, Mode.dnd);
+                                                presenceSTZ = new Presence(Type.available, messege, 42, Mode.dnd);
                                                 connection.sendStanza(presenceSTZ);  
                                                 break;
                                             case 5:
-                                                presenceSTZ = new Presence(Presence.Type.available, messege, 42, Mode.xa);
+                                                presenceSTZ = new Presence(Type.available, messege, 42, Mode.xa);
                                                 connection.sendStanza(presenceSTZ);  
                                                 break;
                                             default:
