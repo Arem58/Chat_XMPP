@@ -153,8 +153,8 @@ public final class App {
                         pass = conteiner.nextLine();
                         //#endregion
                         
-                        System.out.println("Inicio de sesion exitoso");
                         connection.login(user, pass); //Logs in
+                        System.out.println("Inicio de sesion exitoso");
 
                         //#region Listeners y declaracion de variables
                         //Account Manager
