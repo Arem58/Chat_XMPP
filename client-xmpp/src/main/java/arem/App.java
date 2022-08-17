@@ -276,7 +276,7 @@ public final class App {
                                     System.out.println("-----Chat con " + jid + "-----");;
                                     System.out.println("Para ver la opciones en el menu precione 1: ");
                                     while(!messege.contains("~")){
-                                        System.out.print("> (opciones 1)");
+                                        System.out.print("> (help: 1)");
                                         messege = conteiner.nextLine();
                                         if (messege.contains("1"))
                                                 System.out.println("Presione ~ para salir");
@@ -310,7 +310,7 @@ public final class App {
                                     System.out.println("-----Chat con " + jid + "-----");;
                                     System.out.println("Para ver la opciones en el menu precione 1: ");
                                     while(!messege.contains("~")){
-                                            System.out.print("> (opciones 1)");
+                                            System.out.print("> (help: 1)");
                                             messege = conteiner.nextLine();
                                             if (messege.contains("1"))
                                                 System.out.println("Presione ~ para salir");
@@ -322,7 +322,51 @@ public final class App {
                                     //#endregion 
                                     break;
                                 case 6:
-                                System.out.println("Elija una de las opciones disponibles"); 
+                                    //#region Presence
+                                    System.out.println("-----Cambio de estado-----");
+                                    Stanza presenceSTZ;
+                                    System.out.println("""
+                                            Cambien su estado:
+                                            1. Available.
+                                            2. Away.
+                                            3. Free to chat.
+                                            4. Do not disturb.
+                                            5. Away for an extended period of time.
+                                            """
+                                                );
+                                                
+                                    while(true){
+                                        System.out.print(">");
+                                        op = Integer.parseInt(conteiner.nextLine());
+                                        switch(op){
+                                            case 1:
+                                                presenceSTZ = new Presence(Presence.Type.available, "I am busy", 42, Mode.available);
+                                                connection.sendStanza(presenceSTZ);       
+                                                break;
+                                            case 2:
+                                                presenceSTZ = new Presence(Presence.Type.available, "I am busy", 42, Mode.away);
+                                                connection.sendStanza(presenceSTZ);  
+                                                break;
+                                            case 3:
+                                                presenceSTZ = new Presence(Presence.Type.available, "I am busy", 42, Mode.chat);
+                                                connection.sendStanza(presenceSTZ);   
+                                                break;
+                                            case 4:
+                                                presenceSTZ = new Presence(Presence.Type.available, "I am busy", 42, Mode.dnd);
+                                                connection.sendStanza(presenceSTZ);  
+                                                break;
+                                            case 5:
+                                                presenceSTZ = new Presence(Presence.Type.available, "I am busy", 42, Mode.xa);
+                                                connection.sendStanza(presenceSTZ);  
+                                                break;
+                                            default:
+                                                System.out.println("Elija una de las opciones disponibles");
+                                                break;
+                                        }
+                                        if (op < 5)
+                                            break;
+                                    }
+                                    //#endregion
                                     break;
                                 case 7:
                                     //#region Cerrar sesion
