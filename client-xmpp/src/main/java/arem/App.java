@@ -338,25 +338,28 @@ public final class App {
                                     while(true){
                                         System.out.print(">");
                                         op = Integer.parseInt(conteiner.nextLine());
+                                        System.out.print("Ingrese un status:");
+                                        System.out.print(">");
+                                        messege = conteiner.nextLine();
                                         switch(op){
                                             case 1:
-                                                presenceSTZ = new Presence(Presence.Type.available, "I am busy", 42, Mode.available);
+                                                presenceSTZ = new Presence(Presence.Type.available, messege, 42, Mode.available);
                                                 connection.sendStanza(presenceSTZ);       
                                                 break;
                                             case 2:
-                                                presenceSTZ = new Presence(Presence.Type.available, "I am busy", 42, Mode.away);
+                                                presenceSTZ = new Presence(Presence.Type.available, messege, 42, Mode.away);
                                                 connection.sendStanza(presenceSTZ);  
                                                 break;
                                             case 3:
-                                                presenceSTZ = new Presence(Presence.Type.available, "I am busy", 42, Mode.chat);
+                                                presenceSTZ = new Presence(Presence.Type.available, messege, 42, Mode.chat);
                                                 connection.sendStanza(presenceSTZ);   
                                                 break;
                                             case 4:
-                                                presenceSTZ = new Presence(Presence.Type.available, "I am busy", 42, Mode.dnd);
+                                                presenceSTZ = new Presence(Presence.Type.available, messege, 42, Mode.dnd);
                                                 connection.sendStanza(presenceSTZ);  
                                                 break;
                                             case 5:
-                                                presenceSTZ = new Presence(Presence.Type.available, "I am busy", 42, Mode.xa);
+                                                presenceSTZ = new Presence(Presence.Type.available, messege, 42, Mode.xa);
                                                 connection.sendStanza(presenceSTZ);  
                                                 break;
                                             default:
