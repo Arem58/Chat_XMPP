@@ -365,8 +365,9 @@ public final class App {
                                             default:
                                                 System.out.println("Elija una de las opciones disponibles");
                                                 break;
-                                        }
+                                            }
                                         if (op < 5)
+                                            System.out.println("Su estado ha sido cambiado");
                                             break;
                                     }
                                     //#endregion
