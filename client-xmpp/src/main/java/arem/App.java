@@ -1,7 +1,10 @@
 package arem;
 
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
+import org.jivesoftware.smackx.filetransfer.FileTransferListener;
 import org.jivesoftware.smackx.filetransfer.FileTransferManager;
+import org.jivesoftware.smackx.filetransfer.FileTransferRequest;
+import org.jivesoftware.smackx.filetransfer.IncomingFileTransfer;
 import org.jivesoftware.smackx.filetransfer.OutgoingFileTransfer;
 import org.jivesoftware.smackx.iqregister.AccountManager;
 import org.jivesoftware.smackx.muc.MultiUserChat;
@@ -410,6 +413,40 @@ public final class App {
                         System.out.println(" ");
                     }
                 }
+
+                //Codigo para enviar archivos
+                //#region send files
+                // EntityFullJid jid = JidCreate.entityFullFrom("hola2@alumchat.fun/smack");
+
+                // FileTransferManager manager = FileTransferManager.getInstanceFor(connection);
+
+                // OutgoingFileTransfer transfer = manager.createOutgoingFileTransfer(jid);
+
+                // try{
+                //     transfer.sendFile(new File("hola.txt"), "You won't believe this!");
+                // }catch (SmackException.NoResponseException e) {
+                //     e.printStackTrace();
+                // }catch (SmackException.NotConnectedException e) {
+                //     e.printStackTrace();
+                // }
+                
+                // // Create the file transfer manager
+                // final FileTransferManager manager = FileTransferManager.getInstanceFor(connection);
+                // // Create the listener
+                // manager.addFileTransferListener(new FileTransferListener() {
+                //     public void fileTransferRequest(FileTransferRequest request) {
+                //     // Check to see if the request should be accepted
+                //     if (shouldAccept(request)) {
+                //         // Accept it
+                //         IncomingFileTransfer transfer = request.accept();
+                //         transfer.recieveFile(new File("shakespeare_complete_works.txt"));
+                //     } else {
+                //         // Reject it
+                //         request.reject();
+                //     }
+                // }
+                // });
+                //#endregion
                     
                 System.out.println("Disconnected");
             }catch(Exception e){
