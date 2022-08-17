@@ -322,7 +322,7 @@ public final class App {
                                     //#endregion 
                                     break;
                                 case 6:
-                                    //#region Presence
+                                    //#region resence
                                     System.out.println("-----Cambio de estado-----");
                                     Stanza presenceSTZ;
                                     System.out.println("""
