@@ -1,5 +1,13 @@
 package arem;
 
+//Imports para el lab 3 algoritmos de routing
+import arem.Nodo;
+import java.io.*;
+import java.util.*;
+import org.json.simple.*;
+import org.json.simple.parser.*;
+//-------------------------------------------
+
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.jivesoftware.smackx.filetransfer.FileTransferListener;
 import org.jivesoftware.smackx.filetransfer.FileTransferManager;
@@ -59,6 +67,111 @@ public final class App {
      * @param args The arguments of the program.
      */
 
+    //#region Lab3 functions
+    public static int findIndex(int arr[], int t)
+    {
+  
+        // if array is Null
+        if (arr == null) {
+            return -1;
+        }
+  
+        // find length of array
+        int len = arr.length;
+        int i = 0;
+  
+        // traverse in the array
+        while (i < len) {
+  
+            // if the i-th element is t
+            // then return the index
+            if (arr[i] == t) {
+                return i;
+            }
+            else {
+                i = i + 1;
+            }
+        }
+        return -1;
+    }
+    
+    public static void showNetworkMatrix(int m[][],int n){
+        System.out.println("\n\nNetwork Matrix 1st row and colomn showing nodes(or hops) id\n\n");
+        for(int i=0;i<=n;i++){
+            for(int j=0;j<=n;j++){
+                if(i==0&&j==0)
+                    System.out.print("nodes-   ");
+                else if(j==0)System.out.print(m[i][j]+"        ");
+                else System.out.print(m[i][j]+"    ");
+            }
+            System.out.println();
+        }
+    }
+
+    //Flooding algorithm
+    public static void FloodAlgo(Nodo nodos[], int s, int d, int n){
+        System.out.println("\n"+"Nodo fuente: "+ nodos[s-1].getNodo() +"\n");
+        boolean recibido = false;
+        /* Se crea un buffer para poder llevar el control de los nodos que se van a ejecutar y tiene el tamaño de todos los nodos del grafo
+         * menos del nodo source que es de donde parte el algoritmo
+        */
+        int [] Buffer = new int[n-1];
+        int k; 
+        //Aqui buscamos al nodo source y empezamos el proceso de ir en todas direcciones con sus vecinos
+        for (int i = 0; i <= n - 1; i++){
+            if (nodos[i].getIdNodo() == s){
+                System.out.println("Nodo " + nodos[i].getNodo() + " Saltos: " + nodos[i].getSaltos());
+                int size = nodos[i].getTrayecto().length;
+                for (int j = 0; j <= size - 1; j++){
+                    Buffer[j] = nodos[i].getTrayecto()[j];
+                    nodos[Buffer[j] - 1].setRecibido(true);
+                    nodos[Buffer[j] - 1].setSatlos(nodos[i].getSaltos());
+                    System.out.println("Nodo: " + nodos[i].getNodo() + " -----> " + "Nodo: " + nodos[Buffer[j] - 1].getNodo());
+                    if (nodos[Buffer[j] - 1].getIdNodo() == d){
+                        recibido = true;
+                        System.out.println("\n" + "Saltos dados desde nodo fuente: " + nodos[Buffer[j] - 1].getSaltos());
+                        System.out.println("\n" + "Mensaje entregado al Nodo: " + nodos[Buffer[j] - 1].getNodo() + "\n");
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+        
+        //
+        int turno = 0;
+        k = Buffer[turno]; 
+
+        while (!recibido) {
+            for (int i = 0; i <= nodos[k-1].getTrayecto().length - 1; i++){
+                int indice = nodos[k-1].getTrayecto()[i];
+                int index = findIndex(Buffer, 0);
+                if (nodos[indice-1].getIdNodo() != s ){
+                    if(nodos[indice-1].getIdNodo() != d){
+                        if (!nodos[indice-1].getRecibido()){
+                            Buffer[index] = nodos[indice-1].getIdNodo();
+                            nodos[indice - 1].setRecibido(true);
+                            nodos[indice - 1].setSatlos(nodos[k-1].getSaltos());
+                            System.out.println("Nodo: " + nodos[k-1].getNodo() + " -----> " + "Nodo: " + nodos[indice-1].getNodo());
+                        }
+                    }else{
+                        Buffer[index] = nodos[indice-1].getIdNodo();
+                        nodos[indice - 1].setRecibido(true);
+                        nodos[indice - 1].setSatlos(nodos[k-1].getSaltos());
+                        recibido = true;
+                        System.out.println("Nodo: " + nodos[k-1].getNodo() + " -----> " + "Nodo: " + nodos[indice-1].getNodo());
+                        System.out.println("\n" + "Saltos dados desde nodo fuente: " + nodos[indice - 1].getSaltos());
+                        System.out.println("\n" + "Mensaje entregado al Nodo: " + nodos[indice-1].getNodo() + "\n");
+                    }
+                }
+            }
+            turno += 1;
+            k = Buffer[turno];
+        }
+        System.out.println("Buffer de nodos: " + Arrays.toString(Buffer));
+    }
+    //#endregion
+
     public static void menuInicio(){
         System.out.println("""
                 --------Menu----------
@@ -79,9 +192,10 @@ public final class App {
                     4. Chat con usuario
                     5. Unirse a un room
                     6. Cambiar estatus
-                    7. Cerrar sesion
-                    8. Eliminar cuenta
-                    9. Opciones
+                    7. Algoritmo Flooding
+                    8. Cerrar sesion
+                    9. Eliminar cuenta
+                    10. Opciones
                 --------------------------------
                 """); 
     }
