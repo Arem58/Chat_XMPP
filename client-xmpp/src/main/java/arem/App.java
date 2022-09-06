@@ -25,6 +25,7 @@ import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.jid.parts.Resourcepart;
+import org.jxmpp.stringprep.XmppStringprepException;
 import org.jxmpp.util.XmppStringUtils;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 
@@ -38,6 +39,7 @@ import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaCollector;
 import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.SmackException.NotConnectedException;
 import org.jivesoftware.smack.chat2.Chat;
 import org.jivesoftware.smack.chat2.ChatManager;
 import org.jivesoftware.smack.chat2.IncomingChatMessageListener;
@@ -108,11 +110,12 @@ public final class App {
     }
 
     //Flooding algorithm
-    public static void FloodAlgo(Nodo nodos[], int s, int d, int n, String msg){
+    public static void FloodAlgo(Nodo nodos[], int s, int d, int n, String msg, EntityBareJid jid, ChatManager chatManager) throws XmppStringprepException, NotConnectedException, InterruptedException{
         System.out.println("\n"+"Nodo fuente: "+ nodos[s-1].getNodo() +"\n");
 
         //Es la variable que va a llevar listado de todos los nodos recorridos
         String listNd = "";
+        String message = "Mensaje: " + msg;
 
         boolean recibido = false;
         /* Se crea un buffer para poder llevar el control de los nodos que se van a ejecutar y tiene el tamaño de todos los nodos del grafo
@@ -126,11 +129,22 @@ public final class App {
                 System.out.println("Nodo " + nodos[i].getNodo() + " Saltos: " + nodos[i].getSaltos());
                 int size = nodos[i].getTrayecto().length;
                 for (int j = 0; j <= size - 1; j++){
+                    String newMessage;
                     Buffer[j] = nodos[i].getTrayecto()[j];
                     nodos[Buffer[j] - 1].setRecibido(true);
                     nodos[Buffer[j] - 1].setSatlos(nodos[i].getSaltos());
                     System.out.println("Nodo: " + nodos[i].getNodo() + " -----> " + "Nodo: " + nodos[Buffer[j] - 1].getNodo());
                     listNd += "Nodo: " + nodos[i].getNodo() + " -----> " + "Nodo: " + nodos[Buffer[j] - 1].getNodo() + "\n";
+
+                    //Mensaje enviado al nodo
+                    jid = JidCreate.entityBareFrom(nodos[Buffer[j] - 1].getNames());
+                    Chat chat = chatManager.chatWith(jid);
+
+                    //Variable que reune toda la info para enviar a los nodos
+                    newMessage = nodos[Buffer[j] - 1].Message(nodos[i].getNodo(), nodos[d - 1].getNodo()) + listNd + message;
+
+                    chat.send(newMessage);
+
                     if (nodos[Buffer[j] - 1].getIdNodo() == d){
                         recibido = true;
                         System.out.println("\n" + "Saltos dados desde nodo fuente: " + nodos[Buffer[j] - 1].getSaltos());
@@ -153,19 +167,40 @@ public final class App {
                 if (nodos[indice-1].getIdNodo() != s ){
                     if(nodos[indice-1].getIdNodo() != d){
                         if (!nodos[indice-1].getRecibido()){
+                            String newMessage;
                             Buffer[index] = nodos[indice-1].getIdNodo();
                             nodos[indice - 1].setRecibido(true);
                             nodos[indice - 1].setSatlos(nodos[k-1].getSaltos());
                             System.out.println("Nodo: " + nodos[k-1].getNodo() + " -----> " + "Nodo: " + nodos[indice-1].getNodo());
                             listNd += "Nodo: " + nodos[k-1].getNodo() + " -----> " + "Nodo: " + nodos[indice-1].getNodo() + "\n";
+
+                            //Mensaje enviado al nodo
+                            jid = JidCreate.entityBareFrom(nodos[indice-1].getNames());
+                            Chat chat = chatManager.chatWith(jid);
+
+                            //Variable que reune toda la info para enviar a los nodos
+                            newMessage = nodos[indice-1].Message(nodos[i].getNodo(), nodos[d - 1].getNodo()) + listNd + message;
+
+                            chat.send(newMessage);
                         }
                     }else{
+                        String newMessage;
                         Buffer[index] = nodos[indice-1].getIdNodo();
                         nodos[indice - 1].setRecibido(true);
                         nodos[indice - 1].setSatlos(nodos[k-1].getSaltos());
                         recibido = true;
                         System.out.println("Nodo: " + nodos[k-1].getNodo() + " -----> " + "Nodo: " + nodos[indice-1].getNodo());
                         listNd += "Nodo: " + nodos[k-1].getNodo() + " -----> " + "Nodo: " + nodos[indice-1].getNodo() + "\n";
+
+                        //Mensaje enviado al nodo
+                        jid = JidCreate.entityBareFrom(nodos[indice-1].getNames());
+                        Chat chat = chatManager.chatWith(jid);
+
+                        //Variable que reune toda la info para enviar a los nodos
+                        newMessage = nodos[indice-1].Message(nodos[i].getNodo(), nodos[d - 1].getNodo()) + listNd + message;
+
+                        chat.send(newMessage);
+
                         System.out.println("\n" + "Saltos dados desde nodo fuente: " + nodos[indice - 1].getSaltos());
                         System.out.println("\n" + "Mensaje entregado al Nodo: " + nodos[indice-1].getNodo() + "\n");
                     }
@@ -358,7 +393,7 @@ public final class App {
                         //Account Manager
                         AccountManager manager = AccountManager.getInstance(connection);
                         //Jids
-                        EntityBareJid jid;
+                        EntityBareJid jid = null;
                         //Presence
                         Presence presence;
                         //#region Chats
@@ -593,7 +628,7 @@ public final class App {
                                     System.out.print(" Enter the message to pass  :  ");
                                     msg = String.valueOf(br.readLine());
 
-                                    FloodAlgo(nodos, s, d, countNodos, msg);
+                                    FloodAlgo(nodos, s, d, countNodos, msg, jid, chatManager);
 
                                     break;
                                 case 8:

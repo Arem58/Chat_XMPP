@@ -23,8 +23,9 @@ public class Nodo {
         this.names = correo;
     }
 
-    public String Message(int s, int d){
-        return this.message = "Nodo fuente: " + s + "\n" +
+    public String Message(String s, String d){
+        return this.message = "----------------------Mensaje----------------------" + "\n" +
+                              "Nodo fuente: " + s + "\n" +
                               "Nodo destino: " + d + "\n" +
                               "Saltos dados desde nodo fuente: " + saltos + "\n";
     }
