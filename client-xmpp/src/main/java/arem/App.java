@@ -108,8 +108,12 @@ public final class App {
     }
 
     //Flooding algorithm
-    public static void FloodAlgo(Nodo nodos[], int s, int d, int n){
+    public static void FloodAlgo(Nodo nodos[], int s, int d, int n, String msg){
         System.out.println("\n"+"Nodo fuente: "+ nodos[s-1].getNodo() +"\n");
+
+        //Es la variable que va a llevar listado de todos los nodos recorridos
+        String listNd = "";
+
         boolean recibido = false;
         /* Se crea un buffer para poder llevar el control de los nodos que se van a ejecutar y tiene el tamaño de todos los nodos del grafo
          * menos del nodo source que es de donde parte el algoritmo
@@ -126,6 +130,7 @@ public final class App {
                     nodos[Buffer[j] - 1].setRecibido(true);
                     nodos[Buffer[j] - 1].setSatlos(nodos[i].getSaltos());
                     System.out.println("Nodo: " + nodos[i].getNodo() + " -----> " + "Nodo: " + nodos[Buffer[j] - 1].getNodo());
+                    listNd += "Nodo: " + nodos[i].getNodo() + " -----> " + "Nodo: " + nodos[Buffer[j] - 1].getNodo() + "\n";
                     if (nodos[Buffer[j] - 1].getIdNodo() == d){
                         recibido = true;
                         System.out.println("\n" + "Saltos dados desde nodo fuente: " + nodos[Buffer[j] - 1].getSaltos());
@@ -152,6 +157,7 @@ public final class App {
                             nodos[indice - 1].setRecibido(true);
                             nodos[indice - 1].setSatlos(nodos[k-1].getSaltos());
                             System.out.println("Nodo: " + nodos[k-1].getNodo() + " -----> " + "Nodo: " + nodos[indice-1].getNodo());
+                            listNd += "Nodo: " + nodos[k-1].getNodo() + " -----> " + "Nodo: " + nodos[indice-1].getNodo() + "\n";
                         }
                     }else{
                         Buffer[index] = nodos[indice-1].getIdNodo();
@@ -159,6 +165,7 @@ public final class App {
                         nodos[indice - 1].setSatlos(nodos[k-1].getSaltos());
                         recibido = true;
                         System.out.println("Nodo: " + nodos[k-1].getNodo() + " -----> " + "Nodo: " + nodos[indice-1].getNodo());
+                        listNd += "Nodo: " + nodos[k-1].getNodo() + " -----> " + "Nodo: " + nodos[indice-1].getNodo() + "\n";
                         System.out.println("\n" + "Saltos dados desde nodo fuente: " + nodos[indice - 1].getSaltos());
                         System.out.println("\n" + "Mensaje entregado al Nodo: " + nodos[indice-1].getNodo() + "\n");
                     }
@@ -576,14 +583,17 @@ public final class App {
 
                                     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));   
                                     int c; //Una variable solo para obtener los inputs  
+                                    String msg; // Una variable para obtner el input del mensaje a enviar a los nodos
                                     System.out.print(" Enter the source node  id  :  ");
                                     c = Integer.valueOf(br.readLine());  
                                     int s=c;//source node id variable
                                     System.out.print(" Enter the  destination node id  :  ");
                                     c=Integer.valueOf(br.readLine());
                                     int d=c;//destination node id variable
+                                    System.out.print(" Enter the message to pass  :  ");
+                                    msg = String.valueOf(br.readLine());
 
-                                    FloodAlgo(nodos, s, d, countNodos);
+                                    FloodAlgo(nodos, s, d, countNodos, msg);
 
                                     break;
                                 case 8:
