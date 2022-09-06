@@ -10,6 +10,7 @@ public class Nodo {
     public int idNodo;
     public boolean recibido;
     public int saltos = 0;
+    public String message;
 
 
     //Nodo class constructor
@@ -20,6 +21,12 @@ public class Nodo {
         this.idNodo = idNodo;
         this.recibido = recibio;
         this.names = correo;
+    }
+
+    public String Message(){
+        return this.message = "Nodo fuente: " + "\n" +
+                              "Nodo destino: " + "\n" +
+                              "Saltos dados desde nodo fuente: " + saltos + "\n";
     }
 
     //Setter

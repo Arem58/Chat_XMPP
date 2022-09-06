@@ -30,7 +30,6 @@ import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 
 import java.util.Collection;
 import java.util.Scanner;
-import java.io.File;
 
 import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.ConnectionConfiguration;
@@ -172,6 +171,77 @@ public final class App {
     }
     //#endregion
 
+    public static List<Object> getGrafo() throws FileNotFoundException, IOException, ParseException{
+        JSONParser parser = new JSONParser();
+
+        //Se inicializa el json que contiene la topologia del grafo
+        Object obj = parser.parse(new FileReader("/home/arem/Documents/Universidad/Decimo semestre/Redes/Proyecto 1/Chat_XMPP/client-xmpp/src/assets/topologia.json"));
+        JSONObject jsonObject = (JSONObject)obj;
+        String type = (String)jsonObject.get("type");
+        System.out.println("Se ha cargado el archivo tipo: " + type + "\n"); 
+        JSONObject config = (JSONObject)jsonObject.get("config");
+        
+        //Se inicizliza el json que contiene los nombres de los grafos
+        Object names = parser.parse(new FileReader("/home/arem/Documents/Universidad/Decimo semestre/Redes/Proyecto 1/Chat_XMPP/client-xmpp/src/assets/names.json"));
+        JSONObject namesObject = (JSONObject)names;
+        String typeName = (String)namesObject.get("type");
+        System.out.println("Se ha cargado el archivo tipo: " + typeName); 
+        JSONObject nameConfig = (JSONObject)namesObject.get("config");
+
+        //Se inicializa el array que contendra el grafo
+        int n = config.size();
+        int [][]network = new int[n + 1][n + 1];
+
+        // Es para agregar a la matriz en numeor de columnas y filas
+        for(int i=1;i<=n;i++){
+            network[0][i]=i;
+            network[i][0]=i;
+        }
+
+        Nodo[] nodos;
+        nodos = new Nodo[n];
+
+        final Integer[] innerK = new Integer[1];
+        innerK[0] = 1;
+        config.keySet().forEach(keyStr ->{
+            // Object keyvalue = config.get(keyStr);
+            // System.out.println("key: " + keyStr);
+            
+            //Se convierte en Array al objeto json de la respectiva llave para luego iterarla
+            JSONArray subjects = (JSONArray)config.get(keyStr);
+            // VAriable que tiene los nombres de todos los nodos por key
+            String name = (String)nameConfig.get(keyStr);
+            
+            Iterator iterator = subjects.iterator();
+            int [] id = new int [subjects.size()];
+            String [] idName = new String [subjects.size()];
+            int k = 0;
+            while (iterator.hasNext()) {
+                String str = (String)iterator.next();
+                
+                id [k] = (int)str.charAt(0) - 64;
+                idName [k] = str;
+                //Se rellena la matrix netword con los datos del json
+                network[innerK[0]][(int)str.charAt(0) - 64] = 1;
+                k += 1;
+            }
+            //Para llenar de 0 los nodos que no estan conectados
+            for (int i = 1; i < n; i++){
+                if (network[innerK[0]][i] != 1) network[innerK[0]][i] = 0;     
+            }
+            
+
+            String idNodo = (String)keyStr;
+            //Iniciacion de nodo
+            nodos[innerK[0] - 1] = new Nodo();
+            nodos[innerK[0] - 1].setData(id, idName, (String)keyStr, (int)idNodo.charAt(0) - 64,false, name);
+            innerK[0] = innerK[0] + 1;
+        });
+        showNetworkMatrix(network,n);
+        System.out.println("\n" + "------Todos los preparativos estan listos para Flooding------" + "\n");  
+        return Arrays.asList(nodos, n); 
+    }
+
     public static void menuInicio(){
         System.out.println("""
                 --------Menu----------
@@ -195,7 +265,7 @@ public final class App {
                     7. Algoritmo Flooding
                     8. Cerrar sesion
                     9. Eliminar cuenta
-                    10. Opciones
+                   10. Opciones
                 --------------------------------
                 """); 
     }
@@ -317,10 +387,12 @@ public final class App {
                         //#region Funciones principales
                         menuPrincipal();
                         String messege = "";
+                        Nodo[] nodos = null;
+                        int countNodos = 0;
                         while(connection.isConnected()){
                             System.out.print("> ");
                             op = Integer.parseInt(conteiner.nextLine());
-                            System.out.print(" ");
+                            System.out.print("\n");
                             switch(op){
                                 case 1:
                                     //#region Mostrar todo los usuarios
@@ -493,20 +565,41 @@ public final class App {
                                     }
                                     //#endregion
                                     break;
+
                                 case 7:
+                                    if (nodos == null && countNodos == 0){
+                                        List<Object> objects = getGrafo();
+                                        Object[] grafo = objects.toArray();
+                                        nodos = (Nodo[])grafo[0];
+                                        countNodos = (int)grafo[1];
+                                    }
+
+                                    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));   
+                                    int c; //Una variable solo para obtener los inputs  
+                                    System.out.print(" Enter the source node  id  :  ");
+                                    c = Integer.valueOf(br.readLine());  
+                                    int s=c;//source node id variable
+                                    System.out.print(" Enter the  destination node id  :  ");
+                                    c=Integer.valueOf(br.readLine());
+                                    int d=c;//destination node id variable
+
+                                    FloodAlgo(nodos, s, d, countNodos);
+
+                                    break;
+                                case 8:
                                     //#region Cerrar sesion
                                     System.out.println("Sesion cerrada"); 
                                     connection.disconnect();
                                     //#endregion
                                     break;
-                                case 8:
+                                case 9:
                                     //#region Borrar cuenta
                                     System.out.println("Se ha borrado la cuenta"); 
                                     manager.deleteAccount();
                                     connection.disconnect();
                                     //#endregion
                                     break;
-                                case 9:
+                                case 10:
                                     menuPrincipal();
                                     break;
                                 default:
